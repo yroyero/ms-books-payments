@@ -17,8 +17,6 @@ public class LibroDTO implements Serializable {
 
     private String autor;
 
-    private int cantidad;
-
     private double precio;
 
     private boolean visible;

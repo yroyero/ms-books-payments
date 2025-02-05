@@ -46,6 +46,7 @@ public class PedidoServiceImpl implements PedidoService {
         if (!check) {
             throw new NotFoundException("Algunos libros no tienen stock suficiente");
         }
+        pedidoDTO.setEstado("PAGADO");
         PedidoDTO result = pedidoMapper.toDto(pedidoRepository.save(pedidoMapper.toEntity(pedidoDTO)));
         List<ItemPedidoDTO> items = itemPedidoService.saveAll(pedidoDTO.getItems(), result);
         result.setItems(items);
@@ -58,6 +59,11 @@ public class PedidoServiceImpl implements PedidoService {
         return pedidoMapper.toDto(pedidoRepository.findById(pedidoId).orElseThrow(() -> new NotFoundException("Pedido not found")));
     }
 
+    @Override
+    public List<PedidoDTO> getAllPedidos() {
+        log.debug("Request to get Pedidos");
+        return pedidoRepository.findAll().stream().map(pedidoMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
+    }
 
     private List<LibroDTO> getLibros(List<ItemPedidoDTO> items) {
         return items.stream().map(item -> libroService
@@ -66,6 +72,6 @@ public class PedidoServiceImpl implements PedidoService {
 
     private boolean checkStock(List<LibroDTO> libros, List<ItemPedidoDTO> items) {
         return libros.stream().allMatch(libro -> items.stream()
-                .anyMatch(item -> item.getLibroId().equals(libro.getId()) && item.getCantidad() <= libro.getCantidad()));
+                .anyMatch(item -> item.getLibroId().equals(libro.getId()) && libro.isVisible()));
     }
 }

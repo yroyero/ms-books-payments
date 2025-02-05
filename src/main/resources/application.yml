@@ -2,7 +2,7 @@ spring:
   application:
     name: ms-books-payments
   datasource:
-    url: jdbc:h2:mem:paymentdb
+    url: jdbc:h2:mem:paymentdb;Mode=MySQL
     driver-class-name: org.h2.Driver
     username: sa
     password:
@@ -21,6 +21,8 @@ spring:
 
 server:
     port: 8081
+    error:
+      include-stacktrace: on_param
 
 logging:
   level:
@@ -37,4 +39,4 @@ eureka:
 
 ## Configuracion secundaria (custom)
 libro:
-  url: http://ms-inventory-products/products/%s
+  url: http://ms-books-catalogue/products/%s

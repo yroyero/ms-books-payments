@@ -7,6 +7,7 @@ import com.unir.payment.service.dto.PedidoDTO;
 import com.unir.payment.service.mapper.ItemPedidoMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -22,6 +23,7 @@ public class ItemPedidoServiceImpl implements ItemPedidoService {
 
     private final ItemPedidoMapper itemPedidoMapper;
 
+    @Autowired
     public ItemPedidoServiceImpl(ItemPedidoRepository itemPedidoRepository, ItemPedidoMapper itemPedidoMapper) {
         this.itemPedidoRepository = itemPedidoRepository;
         this.itemPedidoMapper = itemPedidoMapper;

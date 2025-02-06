@@ -29,14 +29,14 @@ logging:
     web: DEBUG
 
 ## Eureka Client Configuration
-#eureka:
-#  client:
-#    serviceUrl:
-#      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka}
-#  instance:
-#    preferIpAddress: true
-#    hostname: ms-books-payments
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka}
+  instance:
+    preferIpAddress: true
+    hostname: ms-books-payments
 
 ## Configuracion secundaria (custom)
 libro:
-  url: http://ms-books-catalogue/products/%s
+  url: http://ms-books-catalogue/books/%s

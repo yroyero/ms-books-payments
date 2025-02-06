@@ -1,11 +1,13 @@
 package com.unir.payment.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Builder
 @NoArgsConstructor
@@ -13,6 +15,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@ToString
 @Table(name = "pedido")
 public class Pedido implements Serializable {
 
@@ -38,6 +41,7 @@ public class Pedido implements Serializable {
     private String nombreCliente;
 
     @OneToMany(mappedBy = "pedido", fetch = FetchType.LAZY)
-    private List<ItemPedido> items;
+    @ToString.Exclude
+    private Set<ItemPedido> items;
 
 }

@@ -8,17 +8,22 @@ import com.unir.payment.service.dto.ItemPedidoDTO;
 import com.unir.payment.service.dto.LibroDTO;
 import com.unir.payment.service.dto.PedidoDTO;
 import com.unir.payment.service.mapper.PedidoMapper;
+import com.unir.payment.web.rest.exception.BusinessException;
 import com.unir.payment.web.rest.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class PedidoServiceImpl implements PedidoService {
 
     private final Logger log = LoggerFactory.getLogger(PedidoServiceImpl.class);
@@ -44,9 +49,13 @@ public class PedidoServiceImpl implements PedidoService {
     public PedidoDTO save(PedidoDTO pedidoDTO) {
         log.debug("Request to save Pedido : {}", pedidoDTO);
         List<LibroDTO> libros = getLibros(pedidoDTO.getItems());
+        log.info("Libros: {}", libros);
+        if(ObjectUtils.isEmpty(libros)) {
+            throw new NotFoundException("No se encontraron libros");
+        }
         boolean check = checkStock(libros, pedidoDTO.getItems());
         if (!check) {
-            throw new NotFoundException("Algunos libros no tienen stock suficiente");
+            throw new BusinessException("Algunos libros no tienen stock suficiente");
         }
         pedidoDTO.setEstado("PAGADO");
         PedidoDTO result = pedidoMapper.toDto(pedidoRepository.save(pedidoMapper.toEntity(pedidoDTO)));
@@ -56,12 +65,14 @@ public class PedidoServiceImpl implements PedidoService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PedidoDTO getPedidoDTO(Long pedidoId) {
         log.debug("Request to get PedidoDTO : {}", pedidoId);
         return pedidoMapper.toDto(pedidoRepository.findById(pedidoId).orElseThrow(() -> new NotFoundException("Pedido not found")));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PedidoDTO> getAllPedidos() {
         log.debug("Request to get Pedidos");
         return pedidoRepository.findAll().stream().map(pedidoMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
@@ -69,7 +80,7 @@ public class PedidoServiceImpl implements PedidoService {
 
     private List<LibroDTO> getLibros(List<ItemPedidoDTO> items) {
         return items.stream().map(item -> libroService
-                .getLibroDTO(item.getLibroId())).collect(Collectors.toCollection(LinkedList::new));
+                .getLibroDTO(item.getLibroId())).filter(Objects::nonNull).collect(Collectors.toCollection(LinkedList::new));
     }
 
     private boolean checkStock(List<LibroDTO> libros, List<ItemPedidoDTO> items) {

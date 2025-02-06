@@ -11,6 +11,7 @@ import com.unir.payment.service.mapper.PedidoMapper;
 import com.unir.payment.web.rest.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -30,6 +31,7 @@ public class PedidoServiceImpl implements PedidoService {
 
     private final LibroService libroService;
 
+    @Autowired
     public PedidoServiceImpl(PedidoMapper pedidoMapper, PedidoRepository pedidoRepository,
                              ItemPedidoService itemPedidoService, LibroService libroService) {
         this.pedidoMapper = pedidoMapper;

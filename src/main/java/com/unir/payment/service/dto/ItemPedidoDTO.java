@@ -16,7 +16,7 @@ public class ItemPedidoDTO implements Serializable {
 
     public Long cantidad;
 
-    public Long libroId;
+    public String libroId;
 
     public Double monto;
 

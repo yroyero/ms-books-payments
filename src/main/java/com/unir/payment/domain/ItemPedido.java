@@ -26,7 +26,7 @@ public class ItemPedido implements Serializable {
     private Long cantidad;
 
     @Column(name = "libro_id")
-    private Long libroId;
+    private String libroId;
 
     @Column(name = "monto")
     private Double monto;

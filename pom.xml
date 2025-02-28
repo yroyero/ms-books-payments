@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.unir</groupId>
-	<artifactId>payment</artifactId>
+	<artifactId>ms-books-payment</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>ms-books-payments</name>
 	<description>MS para el pago de pedidos de libro</description>

@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -13,13 +14,27 @@ import java.io.Serializable;
 @ToString
 public class LibroDTO implements Serializable {
 
-    private Long id;
+    private String id;
 
-    private String titulo;
+    private String title;
 
-    private String autor;
+    private String author;
 
-    private double precio;
+    private LocalDate releaseDate;
 
-    private boolean visible;
+    private String genre;
+
+    private String isbn;
+
+    private Integer rating;
+
+    private Boolean visible;
+
+    private Double price;
+
+    private String imageUrl;
+
+    private String summary;
+
+    private String tags;
 }

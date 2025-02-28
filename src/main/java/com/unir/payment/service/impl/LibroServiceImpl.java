@@ -26,7 +26,7 @@ public class LibroServiceImpl implements LibroService {
     }
 
     @Override
-    public LibroDTO getLibroDTO(Long libroId) {
+    public LibroDTO getLibroDTO(String libroId) {
         try {
             String url = String.format(getLibroUrl, libroId);
             log.info("Getting book with ID {}. Request to {}", libroId, url);

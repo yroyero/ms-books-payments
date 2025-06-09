@@ -1,23 +1,38 @@
 package com.unir.payment.service.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class LibroDTO implements Serializable {
 
     private Long id;
 
-    private String titulo;
+    private String title;
 
-    private String autor;
+    private String author;
 
-    private double precio;
+    private LocalDate releaseDate;
 
-    private boolean visible;
+    private String genre;
+
+    private String isbn;
+
+    private Integer rating;
+
+    private Boolean visible;
+
+    private Double price;
+
+    private String imageUrl;
+
+    private String summary;
+
+    private String tags;
 }

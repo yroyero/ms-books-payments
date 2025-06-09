@@ -1,48 +1,102 @@
 package com.unir.payment.service.impl;
 
+import com.unir.payment.domain.Libro;
+import com.unir.payment.repository.LibroRepository;
 import com.unir.payment.service.LibroService;
 import com.unir.payment.service.dto.LibroDTO;
+import com.unir.payment.service.mapper.LibroMapper;
+import com.unir.payment.web.rest.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+import java.util.List;
+import java.util.Optional;
 
 
-@Component
+@Service
 public class LibroServiceImpl implements LibroService {
 
     private final Logger log = LoggerFactory.getLogger(LibroServiceImpl.class);
 
-    @Value("${libro.url}")
-    private String getLibroUrl;
+    private final LibroRepository libroRepository;
 
-    private final RestTemplate restTemplate;
+    private final LibroMapper libroMapper;
 
-    public LibroServiceImpl(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+    public LibroServiceImpl( LibroRepository libroRepository, LibroMapper libroMapper) {
+
+        this.libroRepository = libroRepository;
+        this.libroMapper = libroMapper;
     }
 
     @Override
-    public LibroDTO getLibroDTO(Long libroId) {
-        try {
-            String url = String.format(getLibroUrl, libroId);
-            log.info("Getting book with ID {}. Request to {}", libroId, url);
-            return restTemplate.getForObject(url, LibroDTO.class);
-        } catch (
-                HttpClientErrorException e) {
-            log.error("Client Error: {}, Book with ID {}", e.getStatusCode(), libroId);
-            return null;
-        } catch (
-                HttpServerErrorException e) {
-            log.error("Server Error: {}, Book with ID {}", e.getStatusCode(), libroId);
-            return null;
-        } catch (Exception e) {
-            log.error("Error: {}, Book with ID {}", e.getMessage(), libroId);
-            return null;
-        }
+    public Optional<LibroDTO> findLibroById(Long libroId) {
+    log.info("Finding book by ID: {}", libroId);
+        return libroRepository.findById(libroId)
+                .map(libroMapper::toDto)
+                .or(() -> {
+                    log.warn("Book with ID {} not found", libroId);
+                    return Optional.empty();
+                });
     }
 
+    @Override
+    public LibroDTO saveLibro(LibroDTO libroDTO) {
+    log.info("Saving book: {}", libroDTO);
+        if (ObjectUtils.isEmpty(libroDTO)) {
+            log.error("Cannot save null book");
+            throw new IllegalArgumentException("Cannot save null book");
+        }
+        Libro libro = libroMapper.toEntity(libroDTO);
+        return libroMapper.toDto(libroRepository.save(libro));
+    }
+
+    @Override
+    public LibroDTO updateLibro(Long libroId, LibroDTO libroDTO) {
+    log.info("Updating book with ID {}: {}", libroId, libroDTO);
+        if (ObjectUtils.isEmpty(libroDTO)) {
+            log.error("Cannot update null book");
+            throw new IllegalArgumentException("Cannot update null book");
+        }
+        return libroRepository.findById(libroId)
+                .map(existingLibro -> {
+                    Libro updatedLibro = libroMapper.toEntity(libroDTO);
+                    updatedLibro.setId(existingLibro.getId());
+                    return libroMapper.toDto(libroRepository.save(updatedLibro));
+                })
+                .orElseThrow(() -> new NotFoundException("Book not found with ID: " + libroId));
+    }
+
+    @Override
+    public void deleteLibro(Long libroId) {
+        log.info("Deleting book with ID: {}", libroId);
+        libroRepository.findById(libroId)
+                .ifPresentOrElse(
+                        libro -> {
+                            libroRepository.delete(libro);
+                            log.info("Book with ID {} deleted successfully", libroId);
+                        },
+                        () -> {
+                            log.warn("Book with ID {} not found for deletion", libroId);
+                            throw new NotFoundException("Book not found with ID: " + libroId);
+                        }
+                );
+    }
+
+    @Override
+    public List<LibroDTO> getAllLibros(String search) {
+    log.info("Retrieving all books with filters: {}, ",search);
+        return libroRepository.findByFilters(search)
+                .stream()
+                .map(libroMapper::toDto)
+                .toList();
+    }
+
+    @Override
+    public List<LibroDTO> getAll() {
+        return libroRepository.findAll()
+                .stream()
+                .map(libroMapper::toDto)
+                .toList();
+    }
 }

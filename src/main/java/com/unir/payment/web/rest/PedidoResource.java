@@ -90,7 +90,7 @@ public class PedidoResource {
 
     @GetMapping("/")
     public ResponseEntity<List<PedidoDTO>> getAllPedidos() {
-        log.debug("REST request to get Pedidos : {}");
+        log.debug("REST request to get Pedidos ");
         return ResponseEntity.ok(pedidoService.getAllPedidos());
     }
 }

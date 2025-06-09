@@ -69,11 +69,11 @@ public class PedidoServiceImpl implements PedidoService {
 
     private List<LibroDTO> getLibros(List<ItemPedidoDTO> items) {
         return items.stream().map(item -> libroService
-                .getLibroDTO(item.getLibroId())).collect(Collectors.toCollection(LinkedList::new));
+                .findLibroById(item.getLibroId()).orElseThrow()).collect(Collectors.toCollection(LinkedList::new));
     }
 
     private boolean checkStock(List<LibroDTO> libros, List<ItemPedidoDTO> items) {
         return libros.stream().allMatch(libro -> items.stream()
-                .anyMatch(item -> item.getLibroId().equals(libro.getId()) && libro.isVisible()));
+                .anyMatch(item -> item.getLibroId().equals(libro.getId()) && libro.getVisible()));
     }
 }

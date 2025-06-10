@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class Pedido implements Serializable {
     private Long id;
 
     @Column(name = "fecha")
-    private ZonedDateTime fecha;
+    private LocalDate fecha;
 
     @Column(name = "monto")
     private Double montoTotal;

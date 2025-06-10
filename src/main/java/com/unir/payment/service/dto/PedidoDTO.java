@@ -3,6 +3,7 @@ package com.unir.payment.service.dto;
 import lombok.*;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class PedidoDTO implements Serializable {
 
     private Long id;
 
-    private ZonedDateTime fecha;
+    private LocalDate fecha;
 
     private Double montoTotal;
 
